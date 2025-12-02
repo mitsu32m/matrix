@@ -124,21 +124,79 @@ assertEqualsMatrixAndValues(in2, correct2, 3, 2);
 }
 
 void testInverseMatrix() {
-double in1[N][N], in2[N][N], ans[N][N];
-double in1Values[] = { 1, 1, 1, 1  };
-double in2Values[] = { 1,2,2,1 };
-int k = 2;
-int a = 1;
-int b = 0;
-testStart("testInverseMatrix");
-setValues(in1, in1Values, 2, 2);
-setValues(in2, in2Values, 2, 2);
-inverseMatrix(ans, in1,k);
+    double in1[N][N], in2[N][N], ans[N][N];
+    
+    // in1: 逆行列がないパターン (Det = 0)
+    double in1Values[] = { 1, 1, 1, 1 }; 
+    
+    // in2: 逆行列があるパターン (Det = 3)
+    // 値を {2, 1, 1, 2} に変更したよ。これなら期待値と合う！
+    double in2Values[] = { 2, 1, 1, 2 }; 
 
-double correct1[] = { 2/3, -1/3, -1/3, 2/3};
-assertEqualsInt(inverseMatrix(ans, in1,k),a);
-assertEqualsInt(inverseMatrix(ans, in2,k),b);
-assertEqualsMatrixAndValues(in2, correct1, 3, 3);
+    // 重要！ .0 をつけて double として計算させる
+    double correct1[] = { 2.0/3.0, -1.0/3.0, -1.0/3.0, 2.0/3.0 };
+    
+    int k = 2; // 行列のサイズ
+
+    // 戻り値の想定 (1:成功, 0:失敗 と仮定)
+    int success = 0;
+    int failure = 1;
+
+    testStart("testInverseMatrix");
+    
+    setValues(in1, in1Values, 2, 2);
+    setValues(in2, in2Values, 2, 2);
+
+    // in1 は逆行列がないので、失敗(0)が返るのが正しい
+    assertEqualsInt(inverseMatrix(ans, in1, k), failure);
+
+    // in2 は逆行列があるので、成功(1)して、結果をチェックする
+    assertEqualsInt(inverseMatrix(ans, in2, k), success);
+    
+    // ここは ans をチェック！サイズは 2, 2 で！
+    assertEqualsMatrixAndValues(ans, correct1, 2, 2);
+}
+void testSolveEquations() {
+    double xpp[N][N], app[N][N], bpp[N][N];
+    
+    // --- ケース1: 解ける場合 (Success) ---
+    // A = {{1, 2}, {2, 1}}
+    double aValues[] = { 1, 2, 2, 1 };
+    
+    // b = {{3}, {3}} 
+    // ※引数が[N][N]なので、1列目に値が入るように {3, 0, 3, 0} と設定するよ
+    // (setValuesが左上から順に埋めると仮定)
+    double bValues[] = { 3, 0, 3, 0 };
+    
+    // 期待する解 x = {{1}, {1}} (1列目が1, 1になればOK)
+    double correctX[] = { 1, 0, 1, 0 };
+
+    // --- ケース2: 解けない場合 (Failure) ---
+    // A = {{1, 1}, {1, 1}} (行列式が0)
+    double aSingular[] = { 1, 1, 1, 1 };
+
+    int n = 2;
+    int success = 0; // 画像の仕様通り、成功は 0
+    int failure = 1; // 失敗は 1
+
+    testStart("testSolveEquations");
+
+    // 1. 解けるパターンのテスト
+    setValues(app, aValues, 2, 2);
+    setValues(bpp, bValues, 2, 2);
+    
+    // 戻り値が 0 (成功) であることを確認
+    assertEqualsInt(solveEquations(xpp, app, bpp, n), success);
+    
+    // 計算された x が正しいか確認 (サイズは2x2で渡すけど、実質見るのは1列目)
+    assertEqualsMatrixAndValues(xpp, correctX, 2, 2);
+
+    // 2. 解けないパターンのテスト
+    setValues(app, aSingular, 2, 2);
+    setValues(bpp, bValues, 2, 2); // bは何でもいい
+
+    // 戻り値が 1 (失敗) であることを確認
+    assertEqualsInt(solveEquations(xpp, app, bpp, n), failure);
 }
 
 int main() {
@@ -150,6 +208,7 @@ int main() {
     testcCon();
     testrCmuladd();
     testInverseMatrix();
+    testSolveEquations();
     testErrorCheck(); // この行は絶対に消さないこと
    
     return 0;

@@ -14,4 +14,7 @@ void colConvertMatrix(double matpp[N][N], int r, int c, int n1, int n2);
 void rowCmulAddMatrix(double matpp[N][N], int r, int c,int n1, double k, int n2);
 
 int inverseMatrix(double anspp[N][N], double inpp[N][N], int n);
+
+int solveEquations(double xpp[N][N], double app[N][N],double bpp[N][N], int n);
+
 //
