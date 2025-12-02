@@ -199,6 +199,7 @@ void testSolveEquations() {
     assertEqualsInt(solveEquations(xpp, app, bpp, n), failure);
 }
 
+
 int main() {
     testSetValues(); // 関数の呼び出しを追加
     testAddMatrix();
