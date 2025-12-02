@@ -168,5 +168,32 @@ int inverseMatrix(double anspp[N][N], double inpp[N][N], int n) {
         }
     }
 
+
+    return 0;
+}
+int solveEquations(double xpp[N][N], double app[N][N], double bpp[N][N], int n) {
+    double invA[N][N]; // 逆行列を一時的に保存する場所
+    int result;
+    int i, j;
+    // 1. まず A の逆行列を計算してみる
+    // (前の会話のテストコードに基づき、成功=0, 失敗=1 と仮定しているよ！)
+    result = inverseMatrix(invA, app, n);
+
+    // もし逆行列が計算できなかったら（戻り値が 1 なら）、
+    // 連立方程式も解けないので、ここで諦めて 1 を返す！
+    if (result != 0) {
+        return 1;
+    }
+     for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            xpp[i][j] = 0.0;
+        }
+    }
+    // 2. 逆行列ができたら、掛け算をするだけ！
+    // x = invA * b
+    // 行列 invA (n x n) と、ベクトル b (n x 1) を掛けるよ
+    mulMatrix(xpp, invA, n, n, bpp, n, 1);
+
+    // 計算できたので、成功の 0 を返す！
     return 0;
 }
